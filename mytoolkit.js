@@ -9,8 +9,12 @@ var MyToolkit = (function() {
         //var draw = SVG().addTo('body').size('1500','1500');
         var rect = draw.rect(300,50).fill({ color: defaultGreen, opacity: 0.1}).stroke({ color: defaultGreen, opacity: 0.6, width: 5}).radius(25);
         var rectLabel = draw.text("");
+        var buttonCont = draw.group();
         var clickEvent = null;
         rectLabel.dmove("7", "10");
+
+        buttonCont.add(rect);
+        buttonCont.add(rectLabel);
 
         rect.mouseover(function(){
             this.fill({ color: defaultGreen, opacity: 0.6});
@@ -47,10 +51,13 @@ var MyToolkit = (function() {
     var CheckBox = function(){
         //var draw = SVG().addTo('body').size('400', '400');
         var clickEvent = null;
-        var rect = draw.rect(50, 50).fill({ color: defaultLGray }).radius(10);
         var clickedState = false;
+        var rect = draw.rect(50, 50).fill({ color: defaultLGray }).radius(10);
         var rectLabel = draw.text("hello");
         rectLabel.dmove("55", "7");
+        var chkBoxCont = draw.group()
+        chkBoxCont.add(rect);
+        chkBoxCont.add(rectLabel);
 
         rect.click(function(event){
             clickedState = !clickedState;
@@ -64,9 +71,10 @@ var MyToolkit = (function() {
         })
         return {
             move: function(x, y) {
-                rect.move(x, y);
-                rectLabel.move(x, y);
-                rectLabel.dmove("55", "7");
+                //rect.move(x, y);
+                //rectLabel.move(x, y);
+                //rectLabel.dmove("55", "7");
+                chkBoxCont.move(x, y);
             },
             addLabel: function(text) {
                 rectLabel.text(text);
