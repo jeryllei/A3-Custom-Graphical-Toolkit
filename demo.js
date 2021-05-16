@@ -16,5 +16,6 @@ chkbx.onclick(function(e) {
 })
 
 var prgbar = new MyToolkit.ProgressBar;
-prgbar.setValue(80);
+prgbar.setValue(40);
 prgbar.setWidth(200);
+prgbar.incrValue(40);

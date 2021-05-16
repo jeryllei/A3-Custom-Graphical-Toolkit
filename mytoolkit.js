@@ -78,6 +78,7 @@ var MyToolkit = (function() {
     }
     var RadioButton = function() {
         var clickEvent = null;
+        var buttonArray = [];
     }
     var TextBox = function() {
 
@@ -106,10 +107,18 @@ var MyToolkit = (function() {
             },
             setValue: function(val) {
                 increVal = val;
+                if (increVal > 100)
+                    increVal = 100;
                 progress.width(increVal * multiplier);
             },
             getValue: function() {
                 return increVal;
+            },
+            incrValue: function(val) {
+                increVal += val;
+                if (increVal > 100)
+                    increVal = 100;
+                progress.width(increVal * multiplier);
             }
         }
     }
