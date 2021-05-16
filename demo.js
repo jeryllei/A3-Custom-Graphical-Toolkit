@@ -19,3 +19,4 @@ var prgbar = new MyToolkit.ProgressBar;
 prgbar.setValue(40);
 prgbar.setWidth(200);
 prgbar.incrValue(40);
+prgbar.move(200, 0);

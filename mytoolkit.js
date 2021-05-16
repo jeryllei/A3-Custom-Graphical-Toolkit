@@ -91,12 +91,16 @@ var MyToolkit = (function() {
         var multiplier = 3.0;
         var increVal = 0;
 
+        var prgBarCont = draw.group();
         var bar = draw.rect(wdth, 30).fill({ color: defaultGray });
         var progress = draw.rect(increVal, 30).fill({ color: defaultGreen});
+        prgBarCont.add(bar);
+        prgBarCont.add(progress);
         return {
             move: function(x, y) {
-                bar.move(x, y);
-                progress.move(x, y);
+                //bar.move(x, y);
+                //progress.move(x, y);
+                prgBarCont.move(x, y);
             },
             setWidth: function(val) {
                 wdth = val;
