@@ -91,16 +91,22 @@ var MyToolkit = (function() {
         var increVal = 0;
 
         var bar = draw.rect(wdth, 30).fill({ color: defaultGray });
-        var progress = draw.rect(0, 30).fill({ color: defaultGreen});
+        var progress = draw.rect(increVal, 30).fill({ color: defaultGreen});
         return {
             move: function(x, y) {
                 bar.move(x, y);
+                progress.move(x, y);
             },
             setWidth: function(val) {
                 wdth = val;
+                multiplier = wdth / 100.0;
+                bar.width(wdth);
+                progress.width(increVal * multiplier);
+                console.log(increVal)
             },
             setValue: function(val) {
                 increVal = val;
+                progress.width(increVal * multiplier);
             },
             getValue: function() {
                 return increVal;
