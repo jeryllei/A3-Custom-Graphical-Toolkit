@@ -1,15 +1,16 @@
 import {SVG} from './svg.min.js';
 
 var MyToolkit = (function() {
+    var draw = SVG().addTo('body').size('1920', '1080');
+    var defaultGreen = "#009646";
+    var defaultLGray = "#8c8c8c";
+    var defaultGray = "#5c5c5c";
     var Button = function(){
-        var defaultGreen = "#009646"
-        var draw = SVG().addTo('body').size('1500','1500');
+        //var draw = SVG().addTo('body').size('1500','1500');
         var rect = draw.rect(300,50).fill({ color: defaultGreen, opacity: 0.1}).stroke({ color: defaultGreen, opacity: 0.6, width: 5}).radius(25);
         var rectLabel = draw.text("");
         var clickEvent = null;
         rectLabel.dmove("7", "10");
-        var rect_x = rect.x();
-        var rect_y = rect.y();
 
         rect.mouseover(function(){
             this.fill({ color: defaultGreen, opacity: 0.6});
@@ -26,14 +27,12 @@ var MyToolkit = (function() {
             this.fill({ color: defaultGreen, opacity: 1});
             this.stroke({opacity: 1});
             if(clickEvent != null)
-                console.log(rect_x, rect_y);
+                console.log(this.x(), this.y());
                 clickEvent(event)
         })
         return {
             move: function(x, y) {
                 rect.move(x, y);
-                rect_x = x;
-                rect_y = y;
                 rectLabel.move(x, y);
                 rectLabel.dmove("7", "15");
             },
@@ -45,7 +44,39 @@ var MyToolkit = (function() {
             }
         }
     }
-return {Button}
+    var CheckBox = function(){
+        //var draw = SVG().addTo('body').size('400', '400');
+        var clickEvent = null;
+        var rect = draw.rect(50, 50).fill({ color: defaultLGray}).radius(10);
+        var clickedState = false;
+        var rectLabel = draw.text("hello");
+        rectLabel.dmove("55", "7");
+
+        rect.click(function(event){
+            clickedState = !clickedState;
+            if (clickedState)
+                this.fill({ color: defaultGray});
+            else
+                this.fill({ color: defaultLGray});
+            if(clickEvent != null)
+                console.log(clickedState);
+                clickEvent(event)
+        })
+        return {
+            move: function(x, y) {
+                rect.move(x, y);
+                rectLabel.move(x, y);
+                rectLabel.dmove("55", "7");
+            },
+            addLabel: function(text) {
+                rectLabel.text(text);
+            },
+            onclick: function(eventHandler){
+                clickEvent = eventHandler;
+            }
+        }
+    }
+return {Button, CheckBox}
 }());
 
 export{MyToolkit}

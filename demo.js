@@ -8,3 +8,9 @@ btn.onclick(function(e){
 	console.log("A button was clicked!")
 	console.log(e);
 });
+
+var chkbx = new MyToolkit.CheckBox;
+chkbx.move(100, 400)
+chkbx.onclick(function(e) {
+	console.log(e);
+})
