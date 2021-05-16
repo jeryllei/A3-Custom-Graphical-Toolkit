@@ -76,6 +76,18 @@ var MyToolkit = (function() {
             }
         }
     }
+    var RadioButton = function() {
+
+    }
+    var TextBox = function() {
+
+    }
+    var ScrollBar = function() {
+
+    }
+    var ProgressBar = function() {
+        
+    }
 return {Button, CheckBox}
 }());
 
