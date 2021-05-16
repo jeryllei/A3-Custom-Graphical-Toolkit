@@ -5,6 +5,7 @@ var MyToolkit = (function() {
     var defaultGreen = "#009646";
     var defaultLGray = "#8c8c8c";
     var defaultGray = "#5c5c5c";
+    var defaultBlack = "#000000";
     var Button = function(){
         //var draw = SVG().addTo('body').size('1500','1500');
         var rect = draw.rect(300,50).fill({ color: defaultGreen, opacity: 0.1}).stroke({ color: defaultGreen, opacity: 0.6, width: 5}).radius(25);
@@ -102,8 +103,10 @@ var MyToolkit = (function() {
         var prgBarCont = draw.group();
         var bar = draw.rect(wdth, 30).fill({ color: defaultGray });
         var progress = draw.rect(increVal, 30).fill({ color: defaultGreen});
+
         prgBarCont.add(bar);
         prgBarCont.add(progress);
+        
         return {
             move: function(x, y) {
                 //bar.move(x, y);
@@ -134,7 +137,22 @@ var MyToolkit = (function() {
             }
         }
     }
-return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar}
+    var magic8Ball = function() {
+        var clickEvent = null;
+        var magicCont = draw.group();
+        var ball = draw.circle(100).fill({ color: defaultBlack });
+
+        magicCont.add(ball);
+        return {
+            move: function(x, y) {
+                magicCont.move(x, y);
+            },
+            onclick: function(eventHandler){
+                clickEvent = eventHandler;
+            }
+        }
+    }
+return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar, magic8Ball}
 }());
 
 export{MyToolkit}
