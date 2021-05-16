@@ -14,3 +14,5 @@ chkbx.move(100, 400)
 chkbx.onclick(function(e) {
 	console.log(e);
 })
+
+var prgbar = new MyToolkit.ProgressBar;

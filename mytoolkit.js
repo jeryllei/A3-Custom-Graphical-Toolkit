@@ -47,7 +47,7 @@ var MyToolkit = (function() {
     var CheckBox = function(){
         //var draw = SVG().addTo('body').size('400', '400');
         var clickEvent = null;
-        var rect = draw.rect(50, 50).fill({ color: defaultLGray}).radius(10);
+        var rect = draw.rect(50, 50).fill({ color: defaultLGray }).radius(10);
         var clickedState = false;
         var rectLabel = draw.text("hello");
         rectLabel.dmove("55", "7");
@@ -77,7 +77,7 @@ var MyToolkit = (function() {
         }
     }
     var RadioButton = function() {
-
+        var clickEvent = null;
     }
     var TextBox = function() {
 
@@ -86,9 +86,28 @@ var MyToolkit = (function() {
 
     }
     var ProgressBar = function() {
-        
+        var wdth = 300;
+        var multiplier = 3.0;
+        var increVal = 0;
+
+        var bar = draw.rect(wdth, 30).fill({ color: defaultGray });
+        var progress = draw.rect(0, 30).fill({ color: defaultGreen});
+        return {
+            move: function(x, y) {
+                bar.move(x, y);
+            },
+            setWidth: function(val) {
+                wdth = val;
+            },
+            setValue: function(val) {
+                increVal = val;
+            },
+            getValue: function() {
+                return increVal;
+            }
+        }
     }
-return {Button, CheckBox}
+return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar}
 }());
 
 export{MyToolkit}
