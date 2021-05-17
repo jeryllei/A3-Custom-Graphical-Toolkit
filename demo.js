@@ -15,6 +15,9 @@ chkbx.onclick(function(e) {
 	console.log(e);
 })
 
+var txtbox = new MyToolkit.TextBox;
+txtbox.move(800, 10)
+
 var prgbar = new MyToolkit.ProgressBar;
 prgbar.setValue(40);
 prgbar.setWidth(200);
