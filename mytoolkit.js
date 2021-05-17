@@ -1,6 +1,6 @@
 import {SVG} from './svg.min.js';
 
-// Taken from: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+// Below function is taken from: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -13,9 +13,6 @@ var MyToolkit = (function() {
     var defaultLGray = "#8c8c8c";
     var defaultGray = "#5c5c5c";
     var defaultBlack = "#000000";
-    var testTextBox = function() {
-
-    }
     var Button = function(){
         //var draw = SVG().addTo('body').size('1500','1500');
         var rect = draw.rect(300,50).fill({ color: defaultGreen, opacity: 0.1}).stroke({ color: defaultGreen, opacity: 0.6, width: 5}).radius(25);
@@ -100,18 +97,23 @@ var MyToolkit = (function() {
         var buttonArray = [];
     }
     var TextBox = function() {
-        var clickEvent = null;
-        var keyEvent = null;
-        var userText = [];
-        var textCont = draw.group()
-        var textCursor = draw.line(0, 0, 0, 12).stroke({ color: defaultBlack, width: 5, linecap: "round" });
-        var textBoxBorder = draw.rect(300, 300).fill({ color: defaultLGray }).stroke({ color: defaultBlack, width: 4});
-        
-        textCont.add(textBoxBorder);
-        textCont.add(textCursor);
+        var txtBoxCont = draw.group();
+        var boxBorder = draw.rect(300, 300).fill({ color: "#ffffff" }).stroke( { color: defaultBlack, width: 5});
+        // Working text area implementation found at: https://github.com/svgdotjs/svg.js/issues/1058
+        var foreignObject = draw.foreignObject(300, 300);
+        var textArea = document.createElement('textarea');
+        textArea.setAttribute("onchange", "console.log('Text area modified!')");
+        textArea.setAttribute("rows", 20);
+        textArea.setAttribute("cols", 35);
+        foreignObject.add(textArea);
+        txtBoxCont.add(boxBorder);
+        txtBoxCont.add(foreignObject);
         return {
             move: function(x, y) {
-                textCont.move(x, y);
+                txtBoxCont.move(x, y);
+            },
+            getText: function(x, y) {
+                return textArea.value
             }
         }
     }
@@ -141,7 +143,7 @@ var MyToolkit = (function() {
                 multiplier = wdth / 100.0;
                 bar.width(wdth);
                 progress.width(increVal * multiplier);
-                console.log(increVal)
+                //console.log(increVal)
             },
             setValue: function(val) {
                 increVal = val;
@@ -193,7 +195,7 @@ var MyToolkit = (function() {
             }
         }
     }
-return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar, magic8Ball, testTextBox}
+return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar, magic8Ball}
 }());
 
 export{MyToolkit}
