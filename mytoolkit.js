@@ -1,5 +1,12 @@
 import {SVG} from './svg.min.js';
 
+// Taken from: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
+
 var MyToolkit = (function() {
     var draw = SVG().addTo('body').size('1920', '1080');
     var defaultGreen = "#009646";
@@ -141,8 +148,26 @@ var MyToolkit = (function() {
         var clickEvent = null;
         var magicCont = draw.group();
         var ball = draw.circle(100).fill({ color: defaultBlack });
+        var ball2 = draw.circle(50).fill({ color: "#ffffff"});
+        var label8 = draw.text("8").font({ size: 30 });
+        var response = draw.text("");
+        var responses = ["Definitely yes", "My reply is no", "Maybe", "Ask again tomorrow", 
+                        "Concentrate and ask again", "Don't count on it", "Very doubtful", 
+                        "Cannot predict now", "Without a doubt"];
 
+        ball2.dmove(25, 25);
+        label8.dmove(42, 22);
+        response.dmove(0, 100);
         magicCont.add(ball);
+        magicCont.add(ball2);
+        magicCont.add(label8);
+        magicCont.add(response);
+
+        magicCont.click(function(event){
+            if(clickEvent != null)
+                response.clear().text(responses[getRandomInt(0, 9)]);
+                clickEvent(event)
+        })
         return {
             move: function(x, y) {
                 magicCont.move(x, y);
