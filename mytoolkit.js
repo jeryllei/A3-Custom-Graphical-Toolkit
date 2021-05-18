@@ -19,6 +19,8 @@ var MyToolkit = (function() {
         var rectLabel = draw.text("");
         var buttonCont = draw.group();
         var clickEvent = null;
+        var stateEvent = null;
+        var currentState = "idle";
         rectLabel.dmove("7", "10");
 
         buttonCont.add(rect);
@@ -27,6 +29,8 @@ var MyToolkit = (function() {
         rect.mouseover(function(){
             this.fill({ color: defaultGreen, opacity: 0.6});
             this.stroke({ width: 1});
+            
+            currentState = "hover";
         })
         rect.mouseout(function(){
             this.fill({ color: '#363636', opacity: 0.1});
@@ -39,7 +43,7 @@ var MyToolkit = (function() {
             this.fill({ color: defaultGreen, opacity: 1});
             this.stroke({opacity: 1});
             if(clickEvent != null)
-                console.log(this.x(), this.y());
+                //console.log(this.x(), this.y());
                 clickEvent(event)
         })
         return {
@@ -103,7 +107,7 @@ var MyToolkit = (function() {
             }
         }
     }
-    /** @module RadioButton */
+    /** @module RadioButton  */
     var RadioButton = function() {
         var clickEvent = null;
         var buttonGroup = draw.group();
