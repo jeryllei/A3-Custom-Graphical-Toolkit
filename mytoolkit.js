@@ -6,7 +6,7 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
-
+/** HELLO JSDOC GENERATOR */
 var MyToolkit = (function() {
     var draw = SVG().addTo('body').size('1920', '1080');
     var defaultGreen = "#009646";
@@ -94,7 +94,20 @@ var MyToolkit = (function() {
     }
     var RadioButton = function() {
         var clickEvent = null;
+        var buttonGroup = draw.group();
         var buttonArray = [];
+
+        return {
+            move: function(x, y) {
+                buttonGroup.move(x, y);
+            },
+            addButton: function() {
+
+            },
+            removeButton: function(num) {
+                buttonArray.splice(num, 1);
+            }
+        }
     }
     var TextBox = function() {
         var txtBoxCont = draw.group();
@@ -164,6 +177,7 @@ var MyToolkit = (function() {
     }
     var magic8Ball = function() {
         var clickEvent = null;
+        var responded = false;
         var magicCont = draw.group();
         var ball = draw.circle(100).fill({ color: defaultBlack });
         var ball2 = draw.circle(50).fill({ color: "#ffffff"});
@@ -184,6 +198,7 @@ var MyToolkit = (function() {
         magicCont.click(function(event){
             if(clickEvent != null)
                 response.clear().text(responses[getRandomInt(0, 9)]);
+                responded = true;
                 clickEvent(event)
         })
         return {
@@ -192,6 +207,9 @@ var MyToolkit = (function() {
             },
             onclick: function(eventHandler){
                 clickEvent = eventHandler;
+            },
+            wasClicked: function() {
+                return responded
             }
         }
     }
