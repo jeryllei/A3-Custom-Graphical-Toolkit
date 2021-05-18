@@ -15,7 +15,7 @@ var MyToolkit = (function() {
     var defaultBlack = "#000000";
     /** @module Button */
     var Button = function(){
-        var rect = draw.rect(300,50).fill({ color: defaultGreen, opacity: 0.1}).stroke({ color: defaultGreen, opacity: 0.6, width: 5}).radius(25);
+        var rect = draw.rect(300,50).fill({ opacity: 0.1}).stroke({ color: defaultGreen, opacity: 0.6, width: 5}).radius(25);
         var rectLabel = draw.text("");
         var buttonCont = draw.group();
         var clickEvent = null;
@@ -31,21 +31,35 @@ var MyToolkit = (function() {
             this.stroke({ width: 1});
             
             currentState = "hover";
+            transition()
         })
         rect.mouseout(function(){
-            this.fill({ color: '#363636', opacity: 0.1});
+            this.fill({ opacity: 0.1});
             this.stroke({ opacity: 0.6, width: 5 });
+
+            currentState = "idle";
+            transition()
+        })
+        rect.mousedown(function() {
+            currentState = "pressed";
+            transition();
         })
         rect.mouseup(function(){
             this.fill({ color: defaultGreen});
+
+            currentState = "depressed";
+            transition();
         })
-        rect.click(function(event){
-            this.fill({ color: defaultGreen, opacity: 1});
-            this.stroke({opacity: 1});
+        buttonCont.click(function(event){
+            rect.fill({ color: defaultGreen, opacity: 1});
+            rect.stroke({opacity: 1});
             if(clickEvent != null)
-                //console.log(this.x(), this.y());
                 clickEvent(event)
         })
+        function transition() {
+            if (stateEvent != null)
+                stateEvent(currentState)
+        }
         return {
             /**
              * @param {Number} x The new x coordinate.
@@ -63,10 +77,17 @@ var MyToolkit = (function() {
                 rectLabel.text(text);
             },
             /** 
-             * @param {Function} eventHandler Function to be attached to on click.
+             * @param {Function} eventHandler Function to be attached to click event.
              * @description Add a function to the button that occurs on user click. */
-            onclick: function(eventHandler){
+            onclick: function(eventHandler) {
                 clickEvent = eventHandler;
+            },
+            /** 
+             * @param {Function} eventHandler Function to be attached to state event. 
+             * @description Add a function to the button that occurs when widget state changes.
+            */
+            stateChanged: function(eventHandler) {
+                stateEvent = eventHandler;
             }
         }
     }
@@ -75,13 +96,31 @@ var MyToolkit = (function() {
         //var draw = SVG().addTo('body').size('400', '400');
         var clickEvent = null;
         var clickedState = false;
+        var stateEvent = null;
+        var currentState = "idle";
         var rect = draw.rect(50, 50).fill({ color: defaultLGray }).radius(10);
-        var rectLabel = draw.text("hello");
+        var rectLabel = draw.text("");
         rectLabel.dmove("55", "7");
         var chkBoxCont = draw.group()
         chkBoxCont.add(rect);
         chkBoxCont.add(rectLabel);
 
+        rect.mouseover(function() {
+            currentState = "hover";
+            transition();
+        })
+        rect.mouseout(function() {
+            currentState = "idle";
+            transition();
+        })
+        rect.mousedown(function() {
+            currentState = "pressed";
+            transition();
+        })
+        rect.mouseup(function() {
+            currentState = "depressed";
+            transition();
+        })
         rect.click(function(event){
             clickedState = !clickedState;
             if (clickedState)
@@ -92,11 +131,13 @@ var MyToolkit = (function() {
                 console.log(clickedState);
                 clickEvent(event)
         })
+
+        function transition() {
+            if (stateEvent != null) 
+                stateEvent(currentState);
+        }
         return {
             move: function(x, y) {
-                //rect.move(x, y);
-                //rectLabel.move(x, y);
-                //rectLabel.dmove("55", "7");
                 chkBoxCont.move(x, y);
             },
             addLabel: function(text) {
@@ -104,6 +145,9 @@ var MyToolkit = (function() {
             },
             onclick: function(eventHandler){
                 clickEvent = eventHandler;
+            },
+            stateChanged: function(eventHandler) {
+                stateEvent = eventHandler;
             }
         }
     }
@@ -157,6 +201,9 @@ var MyToolkit = (function() {
         var multiplier = 3.0;
         var increVal = 0;
 
+        var progressState = 'empty';
+        var stateEvent = null;
+
         var prgBarCont = draw.group();
         var bar = draw.rect(wdth, 30).fill({ color: defaultGray });
         var progress = draw.rect(increVal, 30).fill({ color: defaultGreen});
@@ -164,10 +211,14 @@ var MyToolkit = (function() {
         prgBarCont.add(bar);
         prgBarCont.add(progress);
         
+
+
+        function incrementEvent() {
+            if (stateEvent != null)
+                stateEvent(progressState)
+        }
         return {
             move: function(x, y) {
-                //bar.move(x, y);
-                //progress.move(x, y);
                 prgBarCont.move(x, y);
             },
             setWidth: function(val) {
@@ -178,9 +229,21 @@ var MyToolkit = (function() {
                 //console.log(increVal)
             },
             setValue: function(val) {
+                if (val < 0) {
+                    val = 0;
+                }
                 increVal = val;
-                if (increVal > 100)
+                if (increVal > 100) {
                     increVal = 100;
+                    progressState = "full";
+                }
+                else if (increVal == 0) {
+                    progressState = "empty";
+                }
+                else {
+                    progressState = "in progress";
+                }
+                incrementEvent();
                 progress.width(increVal * multiplier);
             },
             getValue: function() {
@@ -188,9 +251,25 @@ var MyToolkit = (function() {
             },
             incrValue: function(val) {
                 increVal += val;
-                if (increVal > 100)
+                if (increVal > 100) {
                     increVal = 100;
+                    progressState = "full"
+                }
+                else if (increVal <= 0) {
+                    increVal = 0;
+                    progressState = "empty";
+                }
+                else {
+                    progressState = "in progress";
+                }
+                incrementEvent();
                 progress.width(increVal * multiplier);
+            },
+            stateChanged: function(eventHandler) {
+                stateEvent = eventHandler;
+            },
+            getState: function() {
+                return progressState;
             }
         }
     }
@@ -198,6 +277,8 @@ var MyToolkit = (function() {
     var Magic8Ball = function() {
         var clickEvent = null;
         var responded = false;
+        var stateEvent = null;
+        var currentState = "idle";
         var magicCont = draw.group();
         var ball = draw.circle(100).fill({ color: defaultBlack });
         var ball2 = draw.circle(50).fill({ color: "#ffffff"});
@@ -215,12 +296,22 @@ var MyToolkit = (function() {
         magicCont.add(label8);
         magicCont.add(response);
 
+
+        magicCont.mouseover(function() {
+            currentState = "hover";
+            transition()
+        })
         magicCont.click(function(event){
             if(clickEvent != null)
                 response.clear().text(responses[getRandomInt(0, 9)]);
                 responded = true;
                 clickEvent(event)
         })
+        function transition() {
+            if (stateEvent != null) {
+                stateEvent(currentState)
+            }
+        }
         return {
             move: function(x, y) {
                 magicCont.move(x, y);
@@ -230,6 +321,9 @@ var MyToolkit = (function() {
             },
             wasClicked: function() {
                 return responded
+            },
+            stateChange: function(eventHandler) {
+                stateEvent = eventHandler;
             }
         }
     }
