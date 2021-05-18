@@ -276,15 +276,28 @@ var MyToolkit = (function() {
                 stateEvent(currentState)
         }
         return {
+            /**
+             * @description Move the button around using x and y coordinates.
+             * @param {Number} x The new x coordinate.
+             * @param {Number} y The new y coordinate.
+             */
             move: function(x, y) {
                 prgBarCont.move(x, y);
             },
+            /**
+             * @description Change the width (px) of the progress bar.
+             * @param {Number} val The new width (px) of the progress bar.
+             */
             setWidth: function(val) {
                 wdth = val;
                 multiplier = wdth / 100.0;
                 bar.width(wdth);
                 progress.width(increVal * multiplier);
             },
+            /**
+             * @description Change the current percentage progress of the progress bar.
+             * @param {Number} val The new total progress of the progress bar.
+             */
             setValue: function(val) {
                 if (val < 0) {
                     val = 0;
@@ -303,9 +316,16 @@ var MyToolkit = (function() {
                 increment();
                 progress.width(increVal * multiplier);
             },
+            /**
+             * @description Returns the current percentage of the progress bar.
+             */
             getValue: function() {
                 return increVal;
             },
+            /** 
+             * @description Increases or decreases the progress bar in terms of percentage.
+             * @param {Number} val The increase or decrease in percentage of the progress bar.
+             */
             incrValue: function(val) {
                 increVal += val;
                 if (increVal > 100) {
@@ -322,12 +342,23 @@ var MyToolkit = (function() {
                 increment();
                 progress.width(increVal * multiplier);
             },
+            /** 
+             * @param {Function} eventHandler Function to be attached to state event. 
+             * @description Add a function to the progress bar that occurs when widget state changes.
+            */
             stateChanged: function(eventHandler) {
                 stateEvent = eventHandler;
             },
+            /**
+             * @description Add a function to the progress bar that occurs when the progress bar increments.
+             * @param {Function} eventHandler Function to be attached to increment event.
+             */
             progressIncrement: function(eventHandler) {
                 incrementEvent = eventHandler;
             },
+            /**
+             * @description Returns the current state of the progress bar as a string (empty, in progress, full).
+             */
             getState: function() {
                 return progressState;
             }
@@ -387,15 +418,31 @@ var MyToolkit = (function() {
             }
         }
         return {
+            /**
+             * @param {Number} x The new x coordinate.
+             * @param {Number} y The new y coordinate.
+             * @description Move the button around using x and y coordinates. 
+            */
             move: function(x, y) {
                 magicCont.move(x, y);
             },
+            /** 
+             * @param {Function} eventHandler Function to be attached to click event.
+             * @description Add a function to the magic 8 ball that occurs on user click. 
+            */
             onclick: function(eventHandler){
                 clickEvent = eventHandler;
             },
+            /**
+             * @description Returns true or false, depending on whether or not the user has clicked on the magic 8 ball.
+             */
             wasClicked: function() {
                 return responded
             },
+            /**
+             * @description Add a function to the magic 8 ball that occurs when the widget state changes.
+             * @param {Function} eventHandler Function to be attached to state event.
+             */
             stateChange: function(eventHandler) {
                 stateEvent = eventHandler;
             }
