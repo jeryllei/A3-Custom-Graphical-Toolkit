@@ -254,6 +254,18 @@ var MyToolkit = (function() {
             currentState = "hover";
             transition();
         })
+        prgBarCont.mouseout(function() {
+            currentState = "idle";
+            transition();
+        })
+        prgBarCont.mousedown(function() {
+            currentState = "pressed";
+            transition();
+        })
+        prgBarCont.mouseup(function() {
+            currentState = "depressed";
+            transition();
+        })
 
         function increment() {
             if (incrementEvent != null)
