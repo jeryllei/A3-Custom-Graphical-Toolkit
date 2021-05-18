@@ -190,7 +190,7 @@ var MyToolkit = (function() {
                 buttonGroup.move(x, y);
             },
             addButton: function() {
-
+                buttonArray.push(new rButton())
             },
             removeButton: function(num) {
                 buttonArray.splice(num, 1);
@@ -229,7 +229,138 @@ var MyToolkit = (function() {
     }
     /** @module ScrollBar */
     var ScrollBar = function() {
+        var currentState = "idle";
+        var clickEvent = null;
+        var stateEvent = null;
+        var scrollGroup = draw.group();
+        var scrollBackground = draw.rect(20, 300).fill({ color: defaultLGray }).radius(5);
+        var scrollBar = draw.rect(20, 30).fill({ color: defaultGreen, opacity: 0.8 }).radius(5).dmove(0, 120);
 
+        var scrollUp = draw.rect(20, 20).fill({ color: defaultGray }).radius(5);
+        var scrollDown = draw.rect(20, 20).fill({ color: defaultGray }).radius(5).dmove(0, 280);
+        var arrowUp = draw.polygon("0,0,5,10,10,0").dmove(5, 285);
+        var arrowDown = draw.polygon("5,0,10,10,0,10").dmove(5, 5);
+
+        var clickAreaUp = draw.rect(20, 20).fill({ opacity: 0 }).radius(5);
+        var clickAreaDown = draw.rect(20, 20).fill({ opacity: 0 }).radius(5).dmove(0, 280);
+
+        scrollGroup.add(scrollBackground).add(scrollBar).add(scrollUp).add(scrollDown).add(arrowUp).add(arrowDown).add(clickAreaUp).add(clickAreaDown);
+
+        scrollBackground.mouseover(function() {
+            currentState = "hover";
+            transition();
+        })
+        scrollBackground.mouseout(function() {
+            currentState = "idle";
+            transition();
+        })
+        scrollBackground.mousedown(function() {
+            currentState = "pressed";
+            transition();
+        })
+        scrollBackground.mouseup(function() {
+            currentState = "depressed";
+            transition();
+        })
+        scrollBackground.click(function(event) {
+            scrollBar.cy(event.y);
+            if (scrollBar.cy() - 15 < scrollUp.cy() + 10) {
+                scrollBar.cy(scrollUp.cy() + 25);
+            }
+            else if (scrollBar.cy() + 15 > scrollDown.cy() - 10) {
+                scrollBar.cy(scrollDown.cy() - 25);
+            }
+            if (clickEvent != null) {
+                clickEvent(event);
+            }
+        })
+        scrollBar.mouseover(function() {
+            currentState = "bar hover";
+            transition();
+        })
+        scrollBar.mouseout(function() {
+            currentState = "idle";
+            transition();
+        })
+
+        clickAreaUp.mouseover(function() {
+            currentState = "up hover";
+            transition();
+        })
+        clickAreaUp.mouseout(function() {
+            currentState = "idle";
+            transition();
+        })
+        clickAreaUp.mousedown(function() {
+            currentState = "up pressed";
+            transition();
+        })
+        clickAreaUp.mouseup(function() {
+            currentState = "up depressed";
+            transition();
+        })
+        clickAreaUp.click(function(event) {
+            if (scrollUp.cy() + 10 < scrollBar.cy() - 15) {
+                scrollBar.dmove(0, -10);
+            }
+            if (scrollBar.cy() - 15 < scrollUp.cy() + 10) {
+                scrollBar.cy(scrollUp.cy() + 25);
+            }
+            else if (scrollBar.cy() + 15 > scrollDown.cy() - 10) {
+                scrollBar.cy(scrollDown.cy() - 25);
+            }
+            if (clickEvent != null) {
+                clickEvent(event);
+            }
+        })
+
+        clickAreaDown.mouseover(function() {
+            currentState = "down hover";
+            transition();
+        })
+        clickAreaDown.mouseout(function() {
+            currentState = "idle";
+            transition();
+        })
+        clickAreaDown.mousedown(function() {
+            currentState = "down pressed";
+            transition();
+        })
+        clickAreaDown.mouseup(function() {
+            currentState = "down depressed";
+            transition();
+        })
+        clickAreaDown.click(function(event) {
+            if (scrollDown.cy() - 10 > scrollBar.cy() + 15) {
+                scrollBar.dmove(0, 10);
+            }
+            if (scrollBar.cy() - 15 < scrollUp.cy() + 10) {
+                scrollBar.cy(scrollUp.cy() + 25);
+            }
+            else if (scrollBar.cy() + 15 > scrollDown.cy() - 10) {
+                scrollBar.cy(scrollDown.cy() - 25);
+            }
+            if (clickEvent != null) {
+                clickEvent(event);
+            }
+        })
+
+        function transition() {
+            if (stateEvent != null) {
+                stateEvent(currentState);
+            }
+        }
+        return {
+            move: function(x, y) {
+                scrollGroup.move(x, y);
+            },
+            stateChanged: function(eventHandler) {
+                stateEvent = eventHandler;
+            },
+            onclick: function(eventHandler) {
+                clickEvent = eventHandler;
+            }
+        }
     }
     /** @module ProgressBar */
     var ProgressBar = function() {

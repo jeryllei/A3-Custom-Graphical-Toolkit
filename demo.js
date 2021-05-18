@@ -45,3 +45,12 @@ magicBall.onclick(function(e) {
 magicBall.stateChange(function(e) {
 	console.log(e);
 })
+
+var scrollBar = new MyToolkit.ScrollBar;
+scrollBar.move(0, 50);
+scrollBar.stateChanged(function(e) {
+	console.log(e);
+})
+scrollBar.onclick(function(e) {
+	console.log(e);
+})
