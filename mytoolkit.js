@@ -221,7 +221,6 @@ var MyToolkit = (function() {
             },
             /**
              * @description Gets the text inside the text box, returns as string.
-             * @returns {string} Text inside the text box.
              */
             getText: function() {
                 return textArea.value
