@@ -25,7 +25,6 @@ var MyToolkit = (function() {
 
         buttonCont.add(rect);
         buttonCont.add(rectLabel);
-
         rect.mouseover(function(){
             this.fill({ color: defaultGreen, opacity: 0.6});
             this.stroke({ width: 1});
@@ -64,7 +63,8 @@ var MyToolkit = (function() {
             /**
              * @param {Number} x The new x coordinate.
              * @param {Number} y The new y coordinate.
-             * @description Move the button around using x and y coordinates. */
+             * @description Move the button around using x and y coordinates. 
+            */
             move: function(x, y) {
                 rect.move(x, y);
                 rectLabel.move(x, y);
@@ -72,13 +72,15 @@ var MyToolkit = (function() {
             },
             /** 
              * @param {string} text Text to be added to the button.
-             * @description Add a text label to the button. */
+             * @description Add a text label to the button. 
+            */
             addLabel: function(text) {
                 rectLabel.text(text);
             },
             /** 
              * @param {Function} eventHandler Function to be attached to click event.
-             * @description Add a function to the button that occurs on user click. */
+             * @description Add a function to the button that occurs on user click. 
+            */
             onclick: function(eventHandler) {
                 clickEvent = eventHandler;
             },
@@ -93,7 +95,6 @@ var MyToolkit = (function() {
     }
     /** @module CheckBox */
     var CheckBox = function(){
-        //var draw = SVG().addTo('body').size('400', '400');
         var clickEvent = null;
         var clickedState = false;
         var stateEvent = null;
@@ -137,15 +138,32 @@ var MyToolkit = (function() {
                 stateEvent(currentState);
         }
         return {
+            /**
+             * @param {Number} x The new x coordinate.
+             * @param {Number} y The new y coordinate.
+             * @description Move the button around using x and y coordinates. 
+            */
             move: function(x, y) {
                 chkBoxCont.move(x, y);
             },
+            /** 
+             * @param {string} text Text to be added to the check box.
+             * @description Add a text label to the check box. 
+            */
             addLabel: function(text) {
                 rectLabel.text(text);
             },
+            /** 
+             * @param {Function} eventHandler Function to be attached to click event.
+             * @description Add a function to the button that occurs on user click. 
+            */
             onclick: function(eventHandler){
                 clickEvent = eventHandler;
             },
+            /** 
+             * @param {Function} eventHandler Function to be attached to state event. 
+             * @description Add a function to the button that occurs when widget state changes.
+            */
             stateChanged: function(eventHandler) {
                 stateEvent = eventHandler;
             }
@@ -153,6 +171,16 @@ var MyToolkit = (function() {
     }
     /** @module RadioButton  */
     var RadioButton = function() {
+
+        var rButton = function() {
+            var button = draw.group();
+            var label = draw.text();
+            return {
+                addLabel: function() {
+                }
+            }
+        }
+
         var clickEvent = null;
         var buttonGroup = draw.group();
         var buttonArray = [];
@@ -183,10 +211,19 @@ var MyToolkit = (function() {
         txtBoxCont.add(boxBorder);
         txtBoxCont.add(foreignObject);
         return {
+            /**
+             * @param {Number} x The new x coordinate.
+             * @param {Number} y The new y coordinate.
+             * @description Move the button around using x and y coordinates. 
+            */
             move: function(x, y) {
                 txtBoxCont.move(x, y);
             },
-            getText: function(x, y) {
+            /**
+             * @description Gets the text inside the text box, returns as string.
+             * @returns {string} Text inside the text box.
+             */
+            getText: function() {
                 return textArea.value
             }
         }
@@ -201,8 +238,10 @@ var MyToolkit = (function() {
         var multiplier = 3.0;
         var increVal = 0;
 
-        var progressState = 'empty';
+        var progressState = "empty";
+        var currentState = "idle";
         var stateEvent = null;
+        var incrementEvent = null;
 
         var prgBarCont = draw.group();
         var bar = draw.rect(wdth, 30).fill({ color: defaultGray });
@@ -210,12 +249,19 @@ var MyToolkit = (function() {
 
         prgBarCont.add(bar);
         prgBarCont.add(progress);
-        
 
+        prgBarCont.mouseover(function() {
+            currentState = "hover";
+            transition();
+        })
 
-        function incrementEvent() {
+        function increment() {
+            if (incrementEvent != null)
+                incrementEvent(progressState)
+        }
+        function transition() {
             if (stateEvent != null)
-                stateEvent(progressState)
+                stateEvent(currentState)
         }
         return {
             move: function(x, y) {
@@ -226,7 +272,6 @@ var MyToolkit = (function() {
                 multiplier = wdth / 100.0;
                 bar.width(wdth);
                 progress.width(increVal * multiplier);
-                //console.log(increVal)
             },
             setValue: function(val) {
                 if (val < 0) {
@@ -243,7 +288,7 @@ var MyToolkit = (function() {
                 else {
                     progressState = "in progress";
                 }
-                incrementEvent();
+                increment();
                 progress.width(increVal * multiplier);
             },
             getValue: function() {
@@ -262,11 +307,14 @@ var MyToolkit = (function() {
                 else {
                     progressState = "in progress";
                 }
-                incrementEvent();
+                increment();
                 progress.width(increVal * multiplier);
             },
             stateChanged: function(eventHandler) {
                 stateEvent = eventHandler;
+            },
+            progressIncrement: function(eventHandler) {
+                incrementEvent = eventHandler;
             },
             getState: function() {
                 return progressState;
@@ -283,6 +331,7 @@ var MyToolkit = (function() {
         var ball = draw.circle(100).fill({ color: defaultBlack });
         var ball2 = draw.circle(50).fill({ color: "#ffffff"});
         var label8 = draw.text("8").font({ size: 30 });
+        var clickArea = draw.circle(100).fill({ opacity: 0 });
         var response = draw.text("");
         var responses = ["Definitely yes", "My reply is no", "Maybe", "Ask again tomorrow", 
                         "Concentrate and ask again", "Don't count on it", "Very doubtful", 
@@ -295,13 +344,26 @@ var MyToolkit = (function() {
         magicCont.add(ball2);
         magicCont.add(label8);
         magicCont.add(response);
+        magicCont.add(clickArea);
 
 
-        magicCont.mouseover(function() {
+        clickArea.mouseover(function() {
             currentState = "hover";
-            transition()
+            transition();
         })
-        magicCont.click(function(event){
+        clickArea.mouseout(function() {
+            currentState = "idle";
+            transition();
+        })
+        clickArea.mousedown(function() {
+            currentState = "pressed";
+            transition();
+        })
+        clickArea.mouseup(function() {
+            currentState = "depressed";
+            transition();
+        })
+        clickArea.click(function(event){
             if(clickEvent != null)
                 response.clear().text(responses[getRandomInt(0, 9)]);
                 responded = true;

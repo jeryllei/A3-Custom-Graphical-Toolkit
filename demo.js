@@ -31,6 +31,9 @@ var prgbar = new MyToolkit.ProgressBar;
 prgbar.stateChanged(function(e) {
 	console.log(e);
 })
+prgbar.progressIncrement(function(e) {
+	console.log(e);
+})
 prgbar.setWidth(200);
 prgbar.move(200, 0);
 
