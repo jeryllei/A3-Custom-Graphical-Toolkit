@@ -6,15 +6,15 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
-/** HELLO JSDOC GENERATOR */
+
 var MyToolkit = (function() {
     var draw = SVG().addTo('body').size('1920', '1080');
     var defaultGreen = "#009646";
     var defaultLGray = "#8c8c8c";
     var defaultGray = "#5c5c5c";
     var defaultBlack = "#000000";
+    /** @module Button */
     var Button = function(){
-        //var draw = SVG().addTo('body').size('1500','1500');
         var rect = draw.rect(300,50).fill({ color: defaultGreen, opacity: 0.1}).stroke({ color: defaultGreen, opacity: 0.6, width: 5}).radius(25);
         var rectLabel = draw.text("");
         var buttonCont = draw.group();
@@ -43,19 +43,30 @@ var MyToolkit = (function() {
                 clickEvent(event)
         })
         return {
+            /**
+             * @param {Number} x The new x coordinate.
+             * @param {Number} y The new y coordinate.
+             * @description Move the button around using x and y coordinates. */
             move: function(x, y) {
                 rect.move(x, y);
                 rectLabel.move(x, y);
                 rectLabel.dmove("7", "15");
             },
+            /** 
+             * @param {string} text Text to be added to the button.
+             * @description Add a text label to the button. */
             addLabel: function(text) {
                 rectLabel.text(text);
             },
+            /** 
+             * @param {Function} eventHandler Function to be attached to on click.
+             * @description Add a function to the button that occurs on user click. */
             onclick: function(eventHandler){
                 clickEvent = eventHandler;
             }
         }
     }
+    /** @module CheckBox */
     var CheckBox = function(){
         //var draw = SVG().addTo('body').size('400', '400');
         var clickEvent = null;
@@ -92,6 +103,7 @@ var MyToolkit = (function() {
             }
         }
     }
+    /** @module RadioButton */
     var RadioButton = function() {
         var clickEvent = null;
         var buttonGroup = draw.group();
@@ -109,6 +121,7 @@ var MyToolkit = (function() {
             }
         }
     }
+    /** @module TextBox */
     var TextBox = function() {
         var txtBoxCont = draw.group();
         var boxBorder = draw.rect(300, 300).fill({ color: "#ffffff" }).stroke( { color: defaultBlack, width: 5});
@@ -130,9 +143,11 @@ var MyToolkit = (function() {
             }
         }
     }
+    /** @module ScrollBar */
     var ScrollBar = function() {
 
     }
+    /** @module ProgressBar */
     var ProgressBar = function() {
         var wdth = 300;
         var multiplier = 3.0;
@@ -175,7 +190,8 @@ var MyToolkit = (function() {
             }
         }
     }
-    var magic8Ball = function() {
+    /** @module Magic8Ball */
+    var Magic8Ball = function() {
         var clickEvent = null;
         var responded = false;
         var magicCont = draw.group();
@@ -213,7 +229,7 @@ var MyToolkit = (function() {
             }
         }
     }
-return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar, magic8Ball}
+return {Button, CheckBox, RadioButton, TextBox, ScrollBar, ProgressBar, Magic8Ball}
 }());
 
 export{MyToolkit}

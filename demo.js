@@ -25,7 +25,7 @@ prgbar.setWidth(200);
 prgbar.incrValue(40);
 prgbar.move(200, 0);
 
-var magicBall = new MyToolkit.magic8Ball;
+var magicBall = new MyToolkit.Magic8Ball;
 magicBall.move(100, 100)
 magicBall.onclick(function(e) {
 	console.log(e);
