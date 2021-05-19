@@ -231,6 +231,7 @@ var MyToolkit = (function() {
     var ScrollBar = function() {
         var currentState = "idle";
         var clickEvent = null;
+        var clickDirection = "idle";
         var stateEvent = null;
         var scrollGroup = draw.group();
         var scrollBackground = draw.rect(20, 300).fill({ color: defaultLGray }).radius(5);
@@ -312,6 +313,8 @@ var MyToolkit = (function() {
             if (clickEvent != null) {
                 clickEvent(event);
             }
+            clickDirection = "moved up";
+            clicked();
         })
 
         clickAreaDown.mouseover(function() {
@@ -343,6 +346,8 @@ var MyToolkit = (function() {
             if (clickEvent != null) {
                 clickEvent(event);
             }
+            clickDirection = "moved down";
+            clicked();
         })
 
         function transition() {
@@ -350,13 +355,31 @@ var MyToolkit = (function() {
                 stateEvent(currentState);
             }
         }
+        function clicked() {
+            if (clickEvent != null) {
+                clickEvent(clickDirection)
+            }
+        }
         return {
+            /**
+             * @param {Number} x The new x coordinate.
+             * @param {Number} y The new y coordinate.
+             * @description Move the scrollbar around using x and y coordinates. 
+            */
             move: function(x, y) {
                 scrollGroup.move(x, y);
             },
+            /** 
+             * @param {Function} eventHandler Function to be attached to state event. 
+             * @description Add a function to the scrollbar that occurs when widget state changes.
+            */
             stateChanged: function(eventHandler) {
                 stateEvent = eventHandler;
             },
+            /** 
+             * @param {Function} eventHandler Function to be attached to click event.
+             * @description Add a function to the scrollbar that occurs on user click. 
+            */
             onclick: function(eventHandler) {
                 clickEvent = eventHandler;
             }
