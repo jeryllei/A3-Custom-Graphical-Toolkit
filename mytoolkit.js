@@ -16,7 +16,7 @@ var MyToolkit = (function() {
     var defaultBlack = "#000000";
     /** @module Button */
     var Button = function(){
-        var rect = draw.rect(300,50).fill({ opacity: 0.1}).stroke({ color: defaultGreen, opacity: 0.6, width: 5}).radius(25);
+        var rect = draw.rect(300,50).fill({ color: defaultLGray, opacity: 0}).stroke({ color: defaultDarkGreen, width: 3 }).radius(25);
         var rectLabel = draw.text("");
         var buttonCont = draw.group();
         var clickEvent = null;
@@ -27,32 +27,27 @@ var MyToolkit = (function() {
         buttonCont.add(rect);
         buttonCont.add(rectLabel);
         rect.mouseover(function(){
-            this.fill({ color: defaultGreen, opacity: 0.6});
-            this.stroke({ width: 1});
-            
+            this.fill({ color: defaultGray, opacity: 0.5 });
             currentState = "hover";
             transition()
         })
         rect.mouseout(function(){
-            this.fill({ opacity: 0.1});
-            this.stroke({ opacity: 0.6, width: 5 });
-
+            this.fill({ color: defaultLGray, opacity: 0 });
             currentState = "idle";
             transition()
         })
         rect.mousedown(function() {
+            this.fill({ color: defaultDarkGreen, opacity: 1 });
             currentState = "pressed";
             transition();
         })
         rect.mouseup(function(){
-            this.fill({ color: defaultGreen});
-
+            if (currentState == "pressed")
+                this.fill({ color: defaultGray, opacity: 0.5 })
             currentState = "depressed";
             transition();
         })
         buttonCont.click(function(event){
-            rect.fill({ color: defaultGreen, opacity: 1});
-            rect.stroke({opacity: 1});
             if(clickEvent != null)
                 clickEvent(event)
         })
@@ -100,7 +95,7 @@ var MyToolkit = (function() {
         var clickedState = false;
         var stateEvent = null;
         var currentState = "idle";
-        var rect = draw.rect(50, 50).fill({ color: defaultLGray }).radius(10);
+        var rect = draw.rect(50, 50).fill({ color: defaultLGray, opacity: 0}).stroke({ color: defaultDarkGreen, width: 3 }).radius(10);
         var rectLabel = draw.text("");
         rectLabel.dmove("55", "7");
         var chkBoxCont = draw.group()
@@ -108,32 +103,39 @@ var MyToolkit = (function() {
         chkBoxCont.add(rectLabel);
 
         rect.mouseover(function() {
+            if (!clickedState) {
+                this.fill({ color: defaultGray, opacity: 0.5 });
+            }
             currentState = "hover";
             transition();
         })
         rect.mouseout(function() {
+            if (!clickedState) {
+                this.fill({ color: defaultLGray, opacity: 0 });
+            }
             currentState = "idle";
             transition();
         })
         rect.mousedown(function() {
+            this.fill({ color: defaultDarkGreen, opacity: 1 });
             currentState = "pressed";
             transition();
         })
         rect.mouseup(function() {
+            this.fill({ color: defaultGreen, opacity: 1 });
             currentState = "depressed";
             transition();
         })
         rect.click(function(event){
             clickedState = !clickedState;
             if (clickedState)
-                this.fill({ color: defaultGray});
+                this.fill({ color: defaultGreen, opacity: 1 });
             else
-                this.fill({ color: defaultLGray});
+                this.fill({ color: defaultLGray, opacity: 0});
             if(clickEvent != null)
                 console.log(clickedState);
                 clickEvent(event)
         })
-
         function transition() {
             if (stateEvent != null) 
                 stateEvent(currentState);
@@ -170,7 +172,8 @@ var MyToolkit = (function() {
             }
         }
     }
-    /** @module RadioButton  
+    /** 
+     * @module RadioButton  
      * @description A better way to describe this would be RadioButtonGroup rather than RadioButton
     */
     var RadioButton = function() {
@@ -183,7 +186,7 @@ var MyToolkit = (function() {
             var selected = false;
             var button = draw.group();
             var label = draw.text("");
-            var circ = draw.circle(25).fill({ color: defaultGray, opacity: 0 }).stroke({ color: defaultBlack, width: 3});
+            var circ = draw.circle(25).fill({ color: defaultGray, opacity: 0 }).stroke({ color: defaultDarkGreen, width: 3});
 
             label.dmove(30)
             button.add(circ);
@@ -344,17 +347,46 @@ var MyToolkit = (function() {
     }
     /** @module TextBox */
     var TextBox = function() {
+        var clickEvent = null;
+        var stateEvent = null;
+        var currentState = "idle";
         var txtBoxCont = draw.group();
-        var boxBorder = draw.rect(300, 300).fill({ color: "#ffffff" }).stroke( { color: defaultBlack, width: 5});
+        var boxBorder = draw.rect(300, 300).fill({ color: "#ffffff" }).stroke( { color: defaultGreen, width: 5});
         // Working text area implementation found at: https://github.com/svgdotjs/svg.js/issues/1058
         var foreignObject = draw.foreignObject(300, 300);
         var textArea = document.createElement('textarea');
-        textArea.setAttribute("onchange", "console.log('Text area modified!')");
         textArea.setAttribute("rows", 20);
         textArea.setAttribute("cols", 35);
         foreignObject.add(textArea);
         txtBoxCont.add(boxBorder);
         txtBoxCont.add(foreignObject);
+
+        txtBoxCont.mouseover(function() {
+            currentState = "hover";
+            transition();
+        })
+        txtBoxCont.mouseout(function() {
+            currentState = "idle";
+            transition();
+        })
+        txtBoxCont.mousedown(function() {
+            currentState = "pressed";
+            transition();
+        })
+        txtBoxCont.mouseup(function() {
+            currentState = "depressed";
+            transition();
+        })
+        txtBoxCont.click(function(event) {
+            if (clickEvent != null) {
+                clickEvent(event);
+            }
+        })
+        function transition() {
+            if (stateEvent != null) {
+                stateEvent(currentState);
+            }
+        }
         return {
             /**
              * @param {Number} x The new x coordinate.
@@ -369,6 +401,20 @@ var MyToolkit = (function() {
              */
             getText: function() {
                 return textArea.value
+            },
+            /**
+             * @description  Add a function to the text box that occurs when the user clicks on it.
+             * @param {Function} eventHandler Function to be attached to click event.
+             */
+            onclick: function(eventHandler) {
+                clickEvent = eventHandler;
+            },
+            /**
+             * @param {Function} eventHandler Function to be attached to state event. 
+             * @description Add a function to the text box that occurs when the widget state changes.
+             */
+            stateChange: function(eventHandler) {
+                stateEvent = eventHandler;
             }
         }
     }
@@ -380,7 +426,7 @@ var MyToolkit = (function() {
         var stateEvent = null;
         var scrollGroup = draw.group();
         var scrollBackground = draw.rect(20, 300).fill({ color: defaultLGray }).radius(5);
-        var scrollBar = draw.rect(20, 30).fill({ color: defaultGreen, opacity: 0.8 }).radius(5).dmove(0, 120);
+        var scrollBar = draw.rect(20, 30).fill({ color: defaultDarkGreen, opacity: 1 }).radius(5).dmove(0, 120);
 
         var scrollUp = draw.rect(20, 20).fill({ color: defaultGray }).radius(5);
         var scrollDown = draw.rect(20, 20).fill({ color: defaultGray }).radius(5).dmove(0, 280);
@@ -430,18 +476,22 @@ var MyToolkit = (function() {
         })
 
         clickAreaUp.mouseover(function() {
+            scrollUp.fill({ color: defaultGreen })
             currentState = "up hover";
             transition();
         })
         clickAreaUp.mouseout(function() {
+            scrollUp.fill({ color: defaultGray })
             currentState = "idle";
             transition();
         })
         clickAreaUp.mousedown(function() {
+            scrollUp.fill({ color: defaultDarkGreen })
             currentState = "up pressed";
             transition();
         })
         clickAreaUp.mouseup(function() {
+            scrollUp.fill({ color: defaultGreen })
             currentState = "up depressed";
             transition();
         })
@@ -463,18 +513,22 @@ var MyToolkit = (function() {
         })
 
         clickAreaDown.mouseover(function() {
+            scrollDown.fill({ color: defaultGreen });
             currentState = "down hover";
             transition();
         })
         clickAreaDown.mouseout(function() {
+            scrollDown.fill({ color: defaultGray });
             currentState = "idle";
             transition();
         })
         clickAreaDown.mousedown(function() {
+            scrollDown.fill({ color: defaultDarkGreen });
             currentState = "down pressed";
             transition();
         })
         clickAreaDown.mouseup(function() {
+            scrollDown.fill({ color: defaultGreen })
             currentState = "down depressed";
             transition();
         })
@@ -542,8 +596,8 @@ var MyToolkit = (function() {
         var incrementEvent = null;
 
         var prgBarCont = draw.group();
-        var bar = draw.rect(wdth, 30).fill({ color: defaultGray });
-        var progress = draw.rect(increVal, 30).fill({ color: defaultGreen});
+        var bar = draw.rect(wdth, 30).fill({ color: defaultLGray }).stroke({ color: defaultDarkGreen, width: 3 }).radius(5);
+        var progress = draw.rect(increVal, 30).fill({ color: defaultDarkGreen }).radius(5);
 
         prgBarCont.add(bar);
         prgBarCont.add(progress);
@@ -673,7 +727,7 @@ var MyToolkit = (function() {
         var ball2 = draw.circle(50).fill({ color: "#ffffff"});
         var label8 = draw.text("8").font({ size: 30 });
         var clickArea = draw.circle(100).fill({ opacity: 0 });
-        var response = draw.text("");
+        var response = draw.text("Click the Magic8Ball");
         var responses = ["Definitely yes", "My reply is no", "Maybe", "Ask again tomorrow", 
                         "Concentrate and ask again", "Don't count on it", "Very doubtful", 
                         "Cannot predict now", "Without a doubt"];
