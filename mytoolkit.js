@@ -170,10 +170,13 @@ var MyToolkit = (function() {
             }
         }
     }
-    /** @module RadioButton  */
+    /** @module RadioButton  
+     * @description A better way to describe this would be RadioButtonGroup rather than RadioButton
+    */
     var RadioButton = function() {
-
-        var rButton = function() {
+        // The actual radio buttons, but the programmer never directly interacts with the rButton objects themselves.
+        var rButton = function(btnNum) {
+            var buttonNum = btnNum;
             var clickEvent = null;
             var stateEvent = null;
             var currentState = "idle";
@@ -225,6 +228,9 @@ var MyToolkit = (function() {
                 selected = !selected;
                 if (selected) {
                     circ.fill({ color: defaultGreen, opacity: 1 });
+                    selectedButton = buttonNum;
+                    enforceOne(buttonNum);
+
                 }
                 else {
                     circ.fill({ color: defaultGray, opacity: 0 });
@@ -237,6 +243,7 @@ var MyToolkit = (function() {
                 addBtnLabel: function(text) {
                     label.text(text)
                 },
+                // Returns the SVG button group to add into the radio button group.
                 getInstance: function() {
                     return button;
                 },
@@ -246,9 +253,11 @@ var MyToolkit = (function() {
                 stateChanged: function(eventHandler) {
                     stateEvent = eventHandler;
                 },
+                // Toggles selection between true and false.
                 toggleSelection: function() {
                     toggle();
                 },
+                // Returns true or false, depending on whether or not the button is selected.
                 getState: function() {
                     return selected;
                 }
@@ -259,25 +268,54 @@ var MyToolkit = (function() {
         var stateEvent = null;
         var buttonGroup = draw.group();
         var buttonArray = [];
+        var buttonTracker = 0;
+        var selectedButton = 0;
 
+        // Goes through the array of radio buttons and makes sure everything is deselected except for the newly selected button.
+        function enforceOne(num) {
+            var i;
+            for (i = 0; i < buttonArray.length; i++) {
+                if (i != num && buttonArray[i].getState() == true) {
+                    buttonArray[i].toggleSelection();
+                }
+            }
+        }
         return {
+            /**
+             * @param {Number} x The new x coordinate.
+             * @param {Number} y The new y coordinate.
+             * @description Move the radio button group around using x and y coordinates. 
+            */
             move: function(x, y) {
                 buttonGroup.move(x, y);
             },
+            /**
+             * @description Adds 1 more radio button to the bottom of the radio button group.
+             */
             addButton: function() {
                 if (buttonArray.length == 0) {
-                    buttonArray.push(new rButton());
+                    buttonArray.push(new rButton(buttonTracker));
                     buttonGroup.add(buttonArray[buttonArray.length - 1].getInstance())
                 }
                 else {
-                    buttonArray.push(new rButton());
+                    buttonTracker += 1;
+                    buttonArray.push(new rButton(buttonTracker));
                     buttonGroup.add(buttonArray[buttonArray.length - 1].getInstance());
-                    buttonArray[buttonArray.length - 1].getInstance().move(0, 30);
+                    buttonArray[buttonArray.length - 1].getInstance().move(0, 30 * buttonTracker);
                 }
             },
+            /**
+             * @description Add a text label to the right of the radio button.
+             * @param {Number} num The radio button to be selected for text change, starting at 0.
+             * @param {string} text The text to be added to the button.
+             */
             addLabel: function(num, text) {
                 buttonArray[num].addBtnLabel(text);
             },
+            /** 
+             * @param {Function} eventHandler Function to be attached to click event.
+             * @description Add a function to all the radio buttons that occurs on user click. 
+            */
             onclick: function(eventHandler) {
                 clickEvent = eventHandler;
                 var i;
@@ -285,12 +323,22 @@ var MyToolkit = (function() {
                     buttonArray[i].onclick(eventHandler);
                 }
             },
+            /** 
+             * @param {Function} eventHandler Function to be attached to state event. 
+             * @description Add a function to all the radio buttons that occurs when widget state changes.
+            */
             stateChanged: function(eventHandler) {
                 stateEvent = eventHandler;
                 var i;
                 for (i = 0; i < buttonArray.length; i++) {
                     buttonArray[i].stateChanged(eventHandler);
                 }
+            },
+            /**
+             * @description Returns the number of buttons in the group, starting from 0 (1 button)
+             */
+            countButtons: function() {
+                return buttonTracker;
             }
         }
     }

@@ -1,13 +1,11 @@
 import {MyToolkit} from './mytoolkit.js';
 
 
-// Implement a MyToolkit Button
 var btn = new MyToolkit.Button;
 btn.addLabel("Click to increase progress bar");
 btn.move(400, 100);
 btn.onclick(function(e){
-	//console.log("A button was clicked!")
-	//console.log(e);
+	console.log(e);
 	prgbar.incrValue(10);
 });
 btn.stateChanged(function(e) {
@@ -58,8 +56,10 @@ scrollBar.onclick(function(e) {
 var radioButtons = new MyToolkit.RadioButton;
 radioButtons.addButton();
 radioButtons.addButton();
-radioButtons.addLabel(0, "hello");
-radioButtons.addLabel(1, "world");
+radioButtons.addButton();
+radioButtons.addLabel(0, "Radio Button 1");
+radioButtons.addLabel(1, "Radio Button 2");
+radioButtons.addLabel(2, "Radio Button 3");
 radioButtons.move(500, 250)
 radioButtons.stateChanged(function(e) {
 	console.log(e);
