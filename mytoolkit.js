@@ -10,6 +10,7 @@ function getRandomInt(min, max) {
 var MyToolkit = (function() {
     var draw = SVG().addTo('body').size('1920', '1080');
     var defaultGreen = "#009646";
+    var defaultDarkGreen = "#007838";
     var defaultLGray = "#8c8c8c";
     var defaultGray = "#5c5c5c";
     var defaultBlack = "#000000";
@@ -173,15 +174,89 @@ var MyToolkit = (function() {
     var RadioButton = function() {
 
         var rButton = function() {
+            var clickEvent = null;
+            var stateEvent = null;
+            var currentState = "idle";
+            var selected = false;
             var button = draw.group();
-            var label = draw.text();
+            var label = draw.text("");
+            var circ = draw.circle(25).fill({ color: defaultGray, opacity: 0 }).stroke({ color: defaultBlack, width: 3});
+
+            label.dmove(30)
+            button.add(circ);
+            button.add(label);
+
+            circ.mouseover(function() {
+                if (!selected) {
+                    this.fill({ color: defaultGray, opacity: 0.5 });
+                }
+                currentState = "hover";
+                transition();
+            })
+            circ.mouseout(function() {
+                if (!selected) {
+                    this.fill({ color: defaultGray, opacity: 0 });
+                }
+                currentState = "idle";
+                transition();
+            })
+            circ.mousedown(function() {
+                this.fill({ color: defaultDarkGreen, opacity: 1 });
+                currentState = "pressed";
+                transition();
+            })
+            circ.mouseup(function() {
+                this.fill({ color: defaultGreen, opacity: 1 });
+                currentState = "depressed";
+                transition();
+            })
+            circ.click(function(event) {
+                toggle();
+                if (clickEvent != null) {
+                    clickEvent(event);
+                }
+            })
+            function transition() {
+                if (stateEvent != null) {
+                    stateEvent(currentState);
+                }
+            }
+            function toggle() {
+                selected = !selected;
+                if (selected) {
+                    circ.fill({ color: defaultGreen, opacity: 1 });
+                }
+                else {
+                    circ.fill({ color: defaultGray, opacity: 0 });
+                }
+            }
             return {
-                addLabel: function() {
+                move: function(x, y) {
+                    button.move(x, y)
+                },
+                addBtnLabel: function(text) {
+                    label.text(text)
+                },
+                getInstance: function() {
+                    return button;
+                },
+                onclick: function(eventHandler) {
+                    clickEvent = eventHandler;
+                },
+                stateChanged: function(eventHandler) {
+                    stateEvent = eventHandler;
+                },
+                toggleSelection: function() {
+                    toggle();
+                },
+                getState: function() {
+                    return selected;
                 }
             }
         }
 
         var clickEvent = null;
+        var stateEvent = null;
         var buttonGroup = draw.group();
         var buttonArray = [];
 
@@ -190,10 +265,32 @@ var MyToolkit = (function() {
                 buttonGroup.move(x, y);
             },
             addButton: function() {
-                buttonArray.push(new rButton())
+                if (buttonArray.length == 0) {
+                    buttonArray.push(new rButton());
+                    buttonGroup.add(buttonArray[buttonArray.length - 1].getInstance())
+                }
+                else {
+                    buttonArray.push(new rButton());
+                    buttonGroup.add(buttonArray[buttonArray.length - 1].getInstance());
+                    buttonArray[buttonArray.length - 1].getInstance().move(0, 30);
+                }
             },
-            removeButton: function(num) {
-                buttonArray.splice(num, 1);
+            addLabel: function(num, text) {
+                buttonArray[num].addBtnLabel(text);
+            },
+            onclick: function(eventHandler) {
+                clickEvent = eventHandler;
+                var i;
+                for (i = 0; i < buttonArray.length; i++) {
+                    buttonArray[i].onclick(eventHandler);
+                }
+            },
+            stateChanged: function(eventHandler) {
+                stateEvent = eventHandler;
+                var i;
+                for (i = 0; i < buttonArray.length; i++) {
+                    buttonArray[i].stateChanged(eventHandler);
+                }
             }
         }
     }

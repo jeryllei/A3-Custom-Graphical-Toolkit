@@ -54,3 +54,16 @@ scrollBar.stateChanged(function(e) {
 scrollBar.onclick(function(e) {
 	console.log(e);
 })
+
+var radioButtons = new MyToolkit.RadioButton;
+radioButtons.addButton();
+radioButtons.addButton();
+radioButtons.addLabel(0, "hello");
+radioButtons.addLabel(1, "world");
+radioButtons.move(500, 250)
+radioButtons.stateChanged(function(e) {
+	console.log(e);
+})
+radioButtons.onclick(function(e) {
+	console.log(e);
+})
